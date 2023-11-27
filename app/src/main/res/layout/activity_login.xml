@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
+    <EditText
+        android:id="@+id/usernameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="20dp"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:background="@drawable/edit_background"
+        android:hint="이메일"
+        android:inputType="textEmailAddress"
+        android:paddingStart="15dp" />
+
+    <EditText
+        android:id="@+id/passwordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/usernameEditText"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:background="@drawable/edit_background"
+        android:hint="비밀번호"
+        android:inputType="textPassword"
+        android:layout_centerInParent="true"
+        android:paddingStart="15dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/passwordEditText"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/edit_background"
+        android:text="로그인"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/join_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loginButton"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/edit_background"
+        android:text="회원가입"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
+</RelativeLayout>

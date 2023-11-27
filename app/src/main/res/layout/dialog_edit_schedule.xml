@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    >
+
+    <!-- 일정 입력란 -->
+    <EditText
+        android:id="@+id/editTextSchedule"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="일정을 입력하세요" />
+
+    <!-- 시작 시간 선택 -->
+    <TimePicker
+        android:id="@+id/timePickerStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center"
+        android:timePickerMode="spinner" />
+
+    <!-- 종료 시간 선택 -->
+    <TimePicker
+        android:id="@+id/timePickerEnd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center"
+        android:timePickerMode="spinner" />
+
+</LinearLayout>
