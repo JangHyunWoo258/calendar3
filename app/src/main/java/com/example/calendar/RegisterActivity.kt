@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.calendar.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var nameEditText: EditText
@@ -48,6 +49,13 @@ class RegisterActivity : AppCompatActivity() {
                 firebaseAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
+                            val userId = firebaseAuth.currentUser?.uid
+                            val userReference = FirebaseDatabase.getInstance().getReference("users").child(userId.orEmpty())
+                            val userData = hashMapOf(
+                                "name" to name
+                            )
+                            userReference.setValue(userData)
+
                             // 회원가입 성공
                             showToast("회원가입 성공")
                             navigateToLoginActivity()
