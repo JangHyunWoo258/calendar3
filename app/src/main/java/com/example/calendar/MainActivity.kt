@@ -11,8 +11,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.calendar.HomeFragment
+import com.example.calendar.LogoutFragment
+import com.example.calendar.SearchFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -29,6 +34,11 @@ class MainActivity : AppCompatActivity() {
     private var selectedDate: String = ""
     private lateinit var recyclerView: RecyclerView
     private lateinit var scheduleAdapter: ScheduleAdapter
+
+    // BottomNavigationView에서 사용할 프래그먼트들
+    private val homeFragment = HomeFragment()
+    private val searchFragment = SearchFragment()
+    private val logoutFragment = LogoutFragment()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,9 +89,39 @@ class MainActivity : AppCompatActivity() {
         scheduleAdapter = ScheduleAdapter(ArrayList(),"") // 초기에는 빈 목록으로 시작
         recyclerView.adapter = scheduleAdapter
 
+        // BottomNavigationView 처리
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.menu_home -> {
+                    replaceFragment(homeFragment)
+                    true
+                }
+                R.id.menu_search -> {
+                    replaceFragment(searchFragment)
+                    true
+                }
+                R.id.menu_logout -> {
+                    replaceFragment(logoutFragment)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // 초기 화면 설정
+        replaceFragment(homeFragment)
+
         // 일정 목록을 불러오는 함수 호출
 
         loadDiary(selectedDate)
+
+
+    }
+    private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .commit()
     }
 
 
