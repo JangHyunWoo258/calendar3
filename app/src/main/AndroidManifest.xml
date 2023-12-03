@@ -26,6 +26,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".ScheduleInputActivity"/>
         <activity android:name=".ScheduleListActivity" />
+        <activity android:name=".SearchActivity" />
 
     </application>
 

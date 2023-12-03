@@ -39,6 +39,11 @@ class MainActivity : AppCompatActivity() {
     private val homeFragment = HomeFragment()
     private val searchFragment = SearchFragment()
     private val logoutFragment = LogoutFragment()
+    override fun onBackPressed() {
+        // 아무런 동작도 하지 않도록 비워 둡니다.
+        // 또는 필요에 따라 특정 동작을 수행할 수 있습니다.
+        // super.onBackPressed() // 이 부분을 주석 해제하면 기본 동작(화면 닫기)이 수행됩니다.
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,6 +96,8 @@ class MainActivity : AppCompatActivity() {
 
         // BottomNavigationView 처리
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
+
+        bottomNavigationView.selectedItemId = R.id.menu_home
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menu_home -> {
@@ -98,12 +105,15 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_search -> {
-                    replaceFragment(searchFragment)
+                    startActivity(Intent(this, SearchActivity::class.java))
+
                     true
                 }
                 R.id.menu_logout -> {
                     replaceFragment(logoutFragment)
+                    showLogoutConfirmationDialog()
                     true
+
                 }
                 else -> false
             }
@@ -174,6 +184,27 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+    private fun showLogoutConfirmationDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("로그아웃 확인")
+        alertDialogBuilder.setMessage("로그아웃 하시겠습니까?")
+
+        alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
+            logoutUser()
+        }
+
+        alertDialogBuilder.setNegativeButton("No") { _, _ ->
+            // 다이얼로그를 닫거나 추가 작업 수행
+        }
+
+        val alertDialog: AlertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun logoutUser() {
+        FirebaseAuth.getInstance().signOut()
+        navigateToLoginActivity()
+    }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -181,6 +212,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun navigateToLoginActivity() {
         // 로그인 액티비티로 이동하는 코드
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun navigateToScheduleList() {
