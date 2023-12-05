@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private var selectedDate: String = ""
     private lateinit var recyclerView: RecyclerView
     private lateinit var scheduleAdapter: ScheduleAdapter
+    private lateinit var titleTextView: TextView
 
     // BottomNavigationView에서 사용할 프래그먼트들
     private val homeFragment = HomeFragment()
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         deleteBtn = findViewById(R.id.deleteBtn)
         diaryContent = findViewById(R.id.diaryContent)
         calendarView = findViewById(R.id.calendarView)
+        titleTextView = findViewById(R.id.title)
 
         userID = intent.getStringExtra("userID") ?: ""
         database = FirebaseDatabase.getInstance().reference
@@ -64,6 +66,22 @@ class MainActivity : AppCompatActivity() {
         if (currentUser == null) {
             navigateToLoginActivity()
             return
+        }
+        currentUser.uid.let { uid ->
+            val userRef = FirebaseDatabase.getInstance().reference.child("users").child(uid)
+
+            userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val name = dataSnapshot.child("name").getValue(String::class.java)
+                    name?.let {
+                        titleTextView.text = it
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // 에러 처리
+                }
+            })
         }
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
@@ -136,51 +154,49 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun loadDiary(date: String) {
-        val scheduleRef = database.child("schedules").child(userID)
-        val userRef = database.child("users").child(userID)
+        val scheduleRef = database.child("schedules")
 
-        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        scheduleRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val userName = dataSnapshot.child("name").value as? String ?: ""
+                val scheduleList = mutableListOf<ScheduleItem>()
 
-                scheduleRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val scheduleList = mutableListOf<ScheduleItem>()
 
-                        for (scheduleSnapshot in dataSnapshot.children) {
-                            val scheduleDate = scheduleSnapshot.child("date").value as? String ?: ""
-                            if (scheduleDate == date) {
-                                val schedule = scheduleSnapshot.child("schedule").value as? String ?: ""
-                                val startTime = scheduleSnapshot.child("startTime").value as? String ?: ""
-                                val endTime = scheduleSnapshot.child("endTime").value as? String ?: ""
-                                val key = scheduleSnapshot.key ?: ""
+                for (userSnapshot in dataSnapshot.children) {
+                    val userName = userSnapshot.child("name").value as? String ?: ""
 
-                                // ScheduleItem을 생성하여 리스트에 추가
-                                val scheduleItem = ScheduleItem(schedule, startTime, endTime, date, key)
-                                scheduleList.add(scheduleItem)
-                            }
-                        }
 
-                        // 어댑터에 데이터 설정
-                        scheduleAdapter.setData(scheduleList, userName)
-                        scheduleAdapter.notifyDataSetChanged()
 
-                        // 리스트가 비어있을 때 메시지 표시
-                        if (scheduleList.isEmpty()) {
-                            diaryContent.text = "일정이 없습니다."
-                        } else {
-                            diaryContent.text = "" // 일정이 있으면 기존 메시지를 지움
+                    for (scheduleSnapshot in userSnapshot.children) {
+                        val scheduleDate = scheduleSnapshot.child("date").value as? String ?: ""
+                        if (scheduleDate == date) {
+                            val schedule = scheduleSnapshot.child("schedule").value as? String ?: ""
+                            val startTime = scheduleSnapshot.child("startTime").value as? String ?: ""
+                            val endTime = scheduleSnapshot.child("endTime").value as? String ?: ""
+                            val key = scheduleSnapshot.key ?: ""
+                            val userName = scheduleSnapshot.child("userName").value as? String ?: ""
+                            println("UserName: $userName")
+
+                            // ScheduleItem을 생성하여 리스트에 추가
+                            val scheduleItem = ScheduleItem(schedule, startTime, endTime, date, key, userName)
+                            scheduleList.add(scheduleItem)
                         }
                     }
+                }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        showToast("일정 불러오기 실패: ${databaseError.message}")
-                    }
-                })
+                // 어댑터에 데이터 설정
+                scheduleAdapter.setData(scheduleList)
+                scheduleAdapter.notifyDataSetChanged()
+
+                // 리스트가 비어있을 때 메시지 표시
+                if (scheduleList.isEmpty()) {
+                    diaryContent.text = "일정이 없습니다."
+                } else {
+                    diaryContent.text = "" // 일정이 있으면 기존 메시지를 지움
+                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                showToast("이름 불러오기 실패: ${databaseError.message}")
+                showToast("일정 불러오기 실패: ${databaseError.message}")
             }
         })
     }

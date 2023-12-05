@@ -28,9 +28,9 @@ class ScheduleAdapter(private var scheduleList: List<ScheduleItem>, private var 
         val scheduleItem = scheduleList[position]
 
         // 사용자 이름 파란색으로 표시
-        val spannableString = SpannableString(" $userName\n일정: ${scheduleItem.schedule}\n시작 시간: ${scheduleItem.startTime}\n종료 시간: ${scheduleItem.endTime}")
-        val userNameStartIndex = spannableString.indexOf(userName)
-        val userNameEndIndex = userNameStartIndex + userName.length
+        val spannableString = SpannableString(" ${scheduleItem.userName}\n일정: ${scheduleItem.schedule}\n시작 시간: ${scheduleItem.startTime}\n종료 시간: ${scheduleItem.endTime}")
+        val userNameStartIndex = spannableString.indexOf(scheduleItem.userName)
+        val userNameEndIndex = userNameStartIndex + scheduleItem.userName.length
 
         if (userNameStartIndex != -1) {
             spannableString.setSpan(
@@ -49,9 +49,9 @@ class ScheduleAdapter(private var scheduleList: List<ScheduleItem>, private var 
     }
 
     // 외부에서 데이터를 설정하는 메서드
-    fun setData(newList: List<ScheduleItem>, userName: String) {
+    fun setData(newList: List<ScheduleItem> ){
         this.scheduleList = newList
-        this.userName = userName
+
         notifyDataSetChanged()
     }
 }

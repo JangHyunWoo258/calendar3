@@ -68,10 +68,10 @@ class SearchActivity : AppCompatActivity() {
 
         queryRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val searchResults = mutableListOf<Schedule>()
+                val searchResults = mutableListOf<ScheduleItem>()
 
                 for (scheduleSnapshot in snapshot.children) {
-                    val schedule = scheduleSnapshot.getValue(Schedule::class.java)
+                    val schedule = scheduleSnapshot.getValue(ScheduleItem::class.java)
                     if (schedule != null) {
                         searchResults.add(schedule)
                     }
